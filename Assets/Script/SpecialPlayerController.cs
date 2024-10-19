@@ -23,13 +23,6 @@ namespace TarodevController
         private float _allowedRadius = 5f; // 玩家可移动的最大半径
         private float segmentLength;
 
-        // 存储初始距离的列表
-        //private List<float> initialSegmentDistances = new List<float>();
-
-        // 计时器变量
-        //private float _overstretchDetectionDelay = 2.0f; // 延迟时间，单位：秒
-       // private float _timeSinceRopeCreated = 0f; // 记录绳子生成后的时间
-
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
@@ -49,9 +42,6 @@ namespace TarodevController
             _rb.velocity = Vector2.zero;
             _prefabInstance = null;
             DestroyRope();
-
-            // 清空初始距离列表
-           // initialSegmentDistances.Clear();
         }
 
         private void Update()
@@ -74,23 +64,8 @@ namespace TarodevController
                 GetComponent<PlayerController>().enabled = true;
                 return;
             }
-
-            // 更新计时器
-           // _timeSinceRopeCreated += Time.fixedDeltaTime;
-
             _prefabPosition = _prefabInstance.transform.position;
-
-            // 检查绳子是否被过度拉伸
-            //if (!IsRopeOverstretched())
-           // {
                 HandleMovement();
-           // }
-            // else
-            // {
-            //     Debug.Log(11);
-            //     // 阻止玩家移动
-            //     _rb.velocity = Vector2.zero;
-            // }
         }
 
         private void GatherInput()
@@ -117,8 +92,6 @@ namespace TarodevController
 
         private void CreateRope()
         {
-            // 重置计时器
-    //_timeSinceRopeCreated = 0f;
 
     Vector2 startPoint = transform.position;
     Vector2 endPoint = _prefabInstance.transform.position;
@@ -127,9 +100,6 @@ namespace TarodevController
     segmentLength = ropeLength / segmentCount;
 
     Rigidbody2D previousRigidBody = _rb;
-
-    // 清空初始距离列表
-   // initialSegmentDistances.Clear();
 
     for (int i = 0; i < segmentCount; i++)
     {
@@ -154,9 +124,6 @@ namespace TarodevController
 
         ropeSegments.Add(segment);
 
-        // 使用 segmentLength 作为初始距离
-       // initialSegmentDistances.Add(segmentLength);
-
         previousRigidBody = segmentRb;
     }
 
@@ -167,9 +134,6 @@ namespace TarodevController
     prefabJoint.distance = segmentLength;
     prefabJoint.maxDistanceOnly = false;
 
-    // 添加最后一个初始距离
-    //initialSegmentDistances.Add(segmentLength);
-
             // 创建 LineRenderer 绘制绳子
             _lineRenderer = new GameObject("RopeLine").AddComponent<LineRenderer>();
             _lineRenderer.positionCount = segmentCount + 2;
@@ -179,46 +143,6 @@ namespace TarodevController
             _lineRenderer.startColor = Color.black;
             _lineRenderer.endColor = Color.black;
         }
-
-        // private bool IsRopeOverstretched()
-        // {
-        //     // 如果绳子生成后经过的时间小于延迟时间，不进行检测
-        //     if (_timeSinceRopeCreated < _overstretchDetectionDelay)
-        //     {
-        //         return false;
-        //     }
-
-        //     Rigidbody2D previousRigidBody = _rb;
-
-        //     for (int i = 0; i < ropeSegments.Count; i++)
-        //     {
-        //         Rigidbody2D currentRigidBody = ropeSegments[i].GetComponent<Rigidbody2D>();
-
-        //         float currentDistance = Vector2.Distance(previousRigidBody.position, currentRigidBody.position);
-        //         float initialDistance = initialSegmentDistances[i];
-
-        //         if (currentDistance > 3f * initialDistance)
-        //         {
-        //             Debug.Log("1");
-        //             return true;
-        //         }
-
-        //         previousRigidBody = currentRigidBody;
-        //     }
-
-        //     // 检查最后一个绳子段和 prefab 之间的距离
-        //     Rigidbody2D prefabRb = _prefabInstance.GetComponent<Rigidbody2D>();
-        //     float lastCurrentDistance = Vector2.Distance(previousRigidBody.position, prefabRb.position);
-        //     float lastInitialDistance = initialSegmentDistances[initialSegmentDistances.Count - 1];
-
-        //     if (lastCurrentDistance > 3f * lastInitialDistance)
-        //     {
-        //         Debug.Log("2");
-        //         return true;
-        //     }
-
-        //     return false;
-        // }
 
         private void UpdateRopeLine()
         {
