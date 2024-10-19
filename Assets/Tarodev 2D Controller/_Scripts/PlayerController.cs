@@ -25,10 +25,12 @@ namespace TarodevController
         public Vector2 FrameInput => _frameInput.Move;
         public event Action<bool, float> GroundedChanged;
         public event Action Jumped;
-
+private PrefabPlacer _prefabPlacer;
+    private SpecialPlayerController _specialController;
         #endregion
 
         private float _time;
+
 
         private void Awake()
         {
@@ -36,7 +38,19 @@ namespace TarodevController
             _col = GetComponent<CapsuleCollider2D>();
 
             _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
+             _prefabPlacer = GetComponent<PrefabPlacer>();
+        _specialController = GetComponent<SpecialPlayerController>();
+
+        _prefabPlacer.OnPrefabPlaced += HandlePrefabPlaced;
         }
+         private void HandlePrefabPlaced(GameObject prefabInstance)
+    {
+        // 禁用当前控制脚本
+        enabled = false;
+
+        // 启用特殊控制脚本，并传递prefab实例
+        _specialController.EnterSpecialMode(prefabInstance);
+    }
 
         private void Update()
         {
